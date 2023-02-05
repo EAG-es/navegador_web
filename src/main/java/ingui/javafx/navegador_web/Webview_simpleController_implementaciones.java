@@ -24,16 +24,14 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.net.http.HttpHeaders;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  *
  * @author emilio
  */
 public abstract class Webview_simpleController_implementaciones implements I_Webview_simpleController_extensiones {
-    public static class Zonas_compartidas {
-        public String contenido_web;    
-    }
-    public ResourceBundle in = null; 
+    public static String k_in_ruta = "in/ingui/javafx/navegador_web/in";
     public static String k_protocolo_https = "https://";
     public static String k_protocolo_http = "http://";
     public static String k_url_formulario = k_protocolo_http + "navegador_web/formulario";
@@ -41,12 +39,13 @@ public abstract class Webview_simpleController_implementaciones implements I_Web
     public static String k_dir_servidor_web = "dir_servidor_web";
     public static int k_puerto_ssl = 443;
     public static String k_mensaje_aviso = "";
-    Zonas_compartidas zona_compartida = new Zonas_compartidas();
+    public ResourceBundle in = null; 
+    AtomicReference<String> contenido_web_atref = new AtomicReference<>();
     
     public Webview_simpleController_implementaciones() throws Exception {
-        in = ResourceBundles.getBundle("in/clientes_web_filtrador/ingui/javafx/in");
+        in = ResourceBundles.getBundle(k_in_ruta);
         k_boton_enviar = tr.in(in, "ENVIAR");
-        k_mensaje_aviso = "Solicitud de página empleando HTTP. No se recomienda este protocolo, debería emplear HTTPS. ";
+        k_mensaje_aviso = tr.in(in, "Solicitud de página empleando HTTP. No se recomienda este protocolo, debería emplear HTTPS. ");
     }
     /**
      * Procesa las peticiones URL que recibe el Webview_simpleController
@@ -57,6 +56,7 @@ public abstract class Webview_simpleController_implementaciones implements I_Web
     public Boolean procesar_url(URL url, oks ok, Object ... extras_array) throws Exception {
         if (ok.es == false) { return ok.es; }
         // No hace nada, en esta aplicación. Un ejemplo sería si llamase a: _ejemplo_procesamiento_de_clic_en_url_del_navegador_web
+        // _ejemplo_procesamiento_de_clic_en_url_del_navegador_web(url, ok);
         return ok.es;
     }
     
@@ -76,11 +76,9 @@ public abstract class Webview_simpleController_implementaciones implements I_Web
                 ok.es = (uri != null);
             }
             if (ok.es) {
-                if (uri.getScheme().equals("http")
-                        || uri.getScheme().equals("https")
-                        || uri.getScheme().equals("file")) {
-//                    texto = _procesar_con_httpclient(uri, error);
-                    texto = _procesar_con_url(uri, ok);
+                if (uri.getScheme().equals("http")) {
+//                    texto = _procesar_con_httpclient(uri, error); // Opción 1
+                    texto = _procesar_con_url(uri, ok); // Opción 2
                     if (ok.es) {
                         ok.es = (texto != null);
                     }
@@ -100,7 +98,6 @@ public abstract class Webview_simpleController_implementaciones implements I_Web
                         poner_texto(texto, ok);
                     }
                 } else if (uri.getScheme().equals("https")) {
-                    // Inserte aquí el código necesario para filtrar las peticiones realizadas en la URL
                     presentar_contenido(uri, ok);
                 } else {
                     ok.setTxt(java.text.MessageFormat.format(ResourceBundles.getBundle("in/clientes_web_filtrador/ingui/javafx/in").getString("PROTOCOLO NO SOPORTADO: {0}"), new Object[] {uri.getScheme()}));
@@ -146,7 +143,7 @@ public abstract class Webview_simpleController_implementaciones implements I_Web
      */
     public boolean poner_texto(String texto, oks ok, Object ... extras_array) throws Exception {
         if (ok.es == false) { return ok.es; }
-        escribir_texto(texto, ok);
+        contenido_web_atref.set(texto);
         if (ok.es) {
             presentar_contenido(ok);
         }
@@ -178,7 +175,7 @@ public abstract class Webview_simpleController_implementaciones implements I_Web
      */
     public boolean poner_error(String texto, oks ok, Object ... extras_array) throws Exception {
         if (ok.es == false) { return ok.es; }
-        String mensaje = leer_texto(ok);
+        String mensaje = contenido_web_atref.get();
         String nuevo_mensaje = "";
         ok.es = (mensaje != null);
         if (ok.es == false) {
@@ -186,15 +183,15 @@ public abstract class Webview_simpleController_implementaciones implements I_Web
         }
         if (mensaje.contains("<body>")) {
             nuevo_mensaje = mensaje.replace("<body>", "<body><h3 style='color:red'>" + texto + "</h3>");
-            escribir_texto(nuevo_mensaje, ok);
+            contenido_web_atref.set(nuevo_mensaje);
             if (ok.es) {
                 presentar_contenido(ok);
             }
             if (ok.es) {
-                escribir_texto(mensaje, ok);
+                contenido_web_atref.set(mensaje);
             }
         } else {
-            escribir_texto(texto, ok);
+            contenido_web_atref.set(texto);
             if (ok.es) {
                 presentar_contenido(ok);
             }
@@ -211,9 +208,7 @@ public abstract class Webview_simpleController_implementaciones implements I_Web
     @Override
     public boolean escribir_texto(String texto, oks ok, Object ... extras_array) throws Exception {
         if (ok.es == false) { return ok.es; }
-        synchronized (this) {
-            zona_compartida.contenido_web = texto;
-        }
+        contenido_web_atref.set(texto);
         return ok.es;
     }
     /**
@@ -226,9 +221,7 @@ public abstract class Webview_simpleController_implementaciones implements I_Web
     @Override
     public String leer_texto(oks ok, Object ... extras_array) throws Exception {
         if (ok.es == false) { return null; }
-        synchronized (this) {
-            return zona_compartida.contenido_web;
-        }
+        return contenido_web_atref.get();
     }
     /**
      * Carga el contenido en un hilo
@@ -261,7 +254,7 @@ public abstract class Webview_simpleController_implementaciones implements I_Web
         URI uri = null;
         texto = datos_mapa.get(k_dir_servidor_web);
         if (texto == null) {
-            ok.setTxt(java.text.MessageFormat.format(ResourceBundles.getBundle("in/clientes_web_filtrador/ingui/javafx/in").getString("NO SE HA RECIBIDO EL PARÁMETRO {0}"), new Object[] {k_dir_servidor_web}));
+            ok.setTxt(tr.in(in, "NO SE HA RECIBIDO EL PARÁMETRO {0}"), new Object[] {k_dir_servidor_web});
         }
         if (ok.es) {
             uri = Urls.generar_uri(texto, ok);

@@ -5,7 +5,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="480.0" minWidth="640.0" prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="clientes_web_filtrador.ingui.javafx.Contenedor_principalController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="480.0" minWidth="640.0" prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/17.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ingui.javafx.navegador_web.Contenedor_principalController">
    <children>
       <ScrollPane fx:id="scrollpane_1" fitToHeight="true" fitToWidth="true" layoutX="10.0" layoutY="45.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="425.0" minViewportHeight="425.0" minViewportWidth="640.0" minWidth="640.0" prefHeight="425.0" prefViewportHeight="425.0" prefViewportWidth="640.0" prefWidth="640.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="45.0" />
       <TextField fx:id="errores_textfield" editable="false" layoutX="115.0" layoutY="10.0" prefHeight="26.0" prefWidth="512.0" promptText="Mensajes de error" style="-fx-text-inner-color: red; -fx-background-color: #f4f6f6;" AnchorPane.leftAnchor="120.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />

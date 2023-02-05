@@ -36,7 +36,7 @@ import javax.net.ssl.X509TrustManager;
  * @author emilio
  */
 public class Webview_simpleController implements Initializable {
-    public static String k_in_ruta = "in/ingui.javafx.webtec/in";  //NOI18N
+    public static String k_in_ruta = "in/ingui/javafx/webtec/in";  //NOI18N
     public ResourceBundle in = null;
     public static interface I_Webview_simpleController_extensiones {
         /**
@@ -353,7 +353,9 @@ public class Webview_simpleController implements Initializable {
                 if (ok.es) {
                     presentar_contenido(ok); //NOI18N
                 }
-            } catch (Exception ex) {}
+            } catch (Exception e) {
+                ok.setTxt(e);
+            }
         }
         return ok.es;
     }

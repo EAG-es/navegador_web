@@ -5,12 +5,9 @@
  */
 package ingui.javafx.navegador_web;
 
-import static java.lang.System.err;
 import java.net.URI;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import javafx.application.Application;
-import static javafx.application.Application.launch;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -23,8 +20,13 @@ import innui.modelos.errores.oks;
 import innui.modelos.internacionalizacion.tr;
 import innui.modelos.modelos;
 import innui.modelos.modelos_comunicaciones.modelos_comunicaciones;
+import java.io.File;
 import java.io.InputStream;
 import static java.lang.System.exit;
+import java.util.Arrays;
+import java.util.List;
+import javafx.application.Application;
+import static javafx.application.Application.launch;
 import javafx.collections.ObservableList;
 import javafx.scene.image.Image;
 
@@ -37,6 +39,7 @@ public class Navegador_web extends Application {
     public static String k_icono_ruta = "/re/ingui.javafx.navegador_web.icono.jpg";
     public static String k_fxml_contenedor_principal = "/ingui/javafx/navegador_web/contenedor_principal.fxml";
     public static String k_fxml_webview_simple = "/ingui/javafx/webtec/webview_simple.fxml";
+    public static String k_parametro_url = "-url";
     public ResourceBundle in = null;
     public Contenedor_principalController contenedor_principalController;
     public Webview_simpleController_implementaciones webview_simpleController_implementacion;
@@ -48,7 +51,7 @@ public class Navegador_web extends Application {
             try {
                 if (ok.es == false) { return ok.es; }
                 iniciar(ok);
-                if (ok.es) { 
+                if (ok.es) {
                     launch((String []) extra_array[0]);
                     terminar(ok);
                 }
@@ -85,7 +88,6 @@ public class Navegador_web extends Application {
     
     public Navegador_web() throws Exception {
         oks ok = new oks();
-        in = ResourceBundles.getBundle("in/clientes_web_filtrador/ingui/javafx/in");
         iniciar_atributos(ok);
     }
     /**
@@ -96,6 +98,7 @@ public class Navegador_web extends Application {
      */
     public boolean iniciar_atributos(oks ok, Object ... extras_array) throws Exception {
         if (ok.es == false) { return ok.es; }
+        in = ResourceBundles.getBundle(k_in_ruta);
         i_webview_simpleController_captura = new I_Webview_simpleController_capturas() {
             @Override
             public boolean poner_error(String mensaje, oks ok, Object ... extras_array) {
@@ -147,33 +150,67 @@ public class Navegador_web extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         oks ok = new oks();
-        while (true) {
-            Locale locale = Locale.getDefault();
-            ResourceBundle resourceBundle = ResourceBundles.getBundle(k_in_ruta, locale);
-            FXMLLoader fxmlloader = new FXMLLoader(getClass().getResource(k_fxml_contenedor_principal), resourceBundle); //NOI18N
-            Parent root = fxmlloader.load();
-            // Acceder al controller:
-            contenedor_principalController = fxmlloader.<Contenedor_principalController>getController();
-            contenedor_principalController.webview_simpleController_implementacion = webview_simpleController_implementacion;
-            contenedor_principalController.poner_panel(1, k_fxml_webview_simple, resourceBundle, ok); //NOI18N
-            if (ok.es == false) { break; }
-            poner_icono(stage, ok);
-            if (ok.es == false) { break; }
-            stage.setTitle(tr.in(in, "TITULO"));
-            stage.setScene(new Scene(root));
-            stage.show();
-            FXMLLoader fxmlloader_1 = contenedor_principalController.fxmlLoader_1; 
-            webview_simpleController = fxmlloader_1.<Webview_simpleController>getController();
-            webview_simpleController.agregar_objeto_de_captura(i_webview_simpleController_captura, ok);
-            if (ok.es == false) { break; }
-            webview_simpleController.agregar_objeto_de_extension(webview_simpleController_implementacion, ok);
-            if (ok.es == false) { break; }
-            webview_simpleController_implementacion._cargar_formulario(ok);
-            break;
+        try {
+            int index;
+            while (true) {
+                Locale locale = Locale.getDefault();
+                ResourceBundle resourceBundle = ResourceBundles.getBundle(k_in_ruta, locale);
+                FXMLLoader fxmlloader = new FXMLLoader(getClass().getResource(k_fxml_contenedor_principal), resourceBundle); //NOI18N
+                Parent root = fxmlloader.load();
+                // Acceder al controller:
+                contenedor_principalController = fxmlloader.<Contenedor_principalController>getController();
+                contenedor_principalController.webview_simpleController_implementacion = webview_simpleController_implementacion;
+                contenedor_principalController.poner_panel(1, k_fxml_webview_simple, resourceBundle, ok); //NOI18N
+                if (ok.es == false) { break; }
+                poner_icono(stage, ok);
+                if (ok.es == false) { break; }
+                stage.setTitle(tr.in(in, "TITULO"));
+                stage.setScene(new Scene(root));
+                stage.show();
+                FXMLLoader fxmlloader_1 = contenedor_principalController.fxmlLoader_1; 
+                webview_simpleController = fxmlloader_1.<Webview_simpleController>getController();
+                webview_simpleController.agregar_objeto_de_captura(i_webview_simpleController_captura, ok);
+                if (ok.es == false) { break; }
+                webview_simpleController.agregar_objeto_de_extension(webview_simpleController_implementacion, ok);
+                if (ok.es == false) { break; }
+                // Ejemplo de uso de forularios: 
+                // webview_simpleController_implementacion._cargar_formulario(ok);
+                // Captura de URL desde línea de comando (-url)
+                Application.Parameters parametros_aplicacion = getParameters();
+                List<String> parametros_lista = parametros_aplicacion.getRaw();
+                navegar(parametros_lista, ok);
+                break;
+            }
+        } catch (Exception e) {
+            ok.setTxt(e);
+        } finally {
+            if (ok.es == false) {
+                poner_error(ok.txt, ok);
+            }
         }
-        if (ok.es == false) {
-            err.println(ok.txt);
+    }
+    /**
+     * Realiza la operativa de navegar para presentar una página web
+     * @param parametros_lista
+     * @param ok
+     * @param extra_array
+     * @return
+     * @throws Exception 
+     */
+    public boolean navegar(List<String> parametros_lista, oks ok, Object... extra_array) throws Exception {
+        int index;
+        index = parametros_lista.indexOf(k_parametro_url);
+        if (index >= 0) {
+            String url_tex = parametros_lista.get(index + 1);
+            ok.no_nul(url_tex, tr.in(in, "No se ha indicado el parámetro ") + k_parametro_url + ". ");
+            if (ok.es) {
+                URI uri = new URI(url_tex);
+                webview_simpleController_implementacion.presentar_contenido(uri, ok);
+            }
+        } else {
+            ok.setTxt(tr.in(in, "No se ha indicado el parámetro ") + k_parametro_url + ". ");
         }
+        return ok.es;
     }
     /**
      * Pone el icono de la aplicación
