@@ -44,7 +44,7 @@ public class Navegador_web extends Application {
     public I_Webview_simpleController_capturas _i_webview_simpleController_captura;
     public Webview_simpleController _webview_simpleController;
     public Contenedor_principalController _contenedor_principalController;
-    public iniciales _inicial = new iniciales () {
+    public iniciales inicial = new iniciales () {
         @Override
         @SuppressWarnings("unchecked")
         public boolean run(oks ok, Object... extra_array) throws Exception {
@@ -257,7 +257,7 @@ public class Navegador_web extends Application {
         Navegador_web navegador_web = null;
         try {
             navegador_web = new Navegador_web();
-            navegador_web._inicial.run(ok, Navegador_web.class, args);
+            navegador_web.inicial.run(ok, Navegador_web.class, args);
         } catch (Exception e) {
             ok.setTxt(e);
         }
