@@ -34,11 +34,11 @@ public abstract class Webview_simpleController_implementaciones
      * @return true si todo es correcto, false si hay error.
      */
     @Override
-    public Boolean procesar_url(URL url, oks ok, Object ... extras_array) throws Exception {
+    public Boolean procesar_evento_llamada_a_url(URL url, oks ok, Object ... extras_array) throws Exception {
         if (ok.es == false) { return ok.es; }
         if (o != null) {
             if (o instanceof Webview_simpleController_implementaciones) {
-                return ((Webview_simpleController_implementaciones) o).procesar_url(url, ok, extras_array);
+                return ((Webview_simpleController_implementaciones) o).procesar_evento_llamada_a_url(url, ok, extras_array);
             }
         }
         // No hace nada, en esta aplicación. Un ejemplo sería si llamase a: _ejemplo_procesamiento_de_clic_en_url_del_navegador_web
@@ -53,16 +53,16 @@ public abstract class Webview_simpleController_implementaciones
      * @return true si todo es correcto, false si hay error.
      * @throws java.lang.Exception
      */
-    public boolean poner_texto(String texto, oks ok, Object ... extras_array) throws Exception {
+    public boolean presentar_contenido(String texto, oks ok, Object ... extras_array) throws Exception {
         if (ok.es == false) { return ok.es; }
         if (o != null) {
             if (o instanceof Webview_simpleController_implementaciones) {
-                return ((Webview_simpleController_implementaciones) o).poner_texto(texto, ok, extras_array);
+                return ((Webview_simpleController_implementaciones) o).presentar_contenido(texto, ok, extras_array);
             }
         }
         contenido_web_atref.set(texto);
         if (ok.es) {
-            presentar_contenido(ok);
+            Webview_simpleController_implementaciones.this.presentar_contenido(ok);
         }
         return ok.es;
     }

@@ -47,7 +47,7 @@ public class Webview_simpleController implements Initializable {
          * @return null si hay error o no se debe procesar la petición; o el texto resultante de procesar la petición
          * @throws java.lang.Exception
          */
-        public Boolean procesar_url(URL url, oks ok, Object ... extras_array) throws Exception;
+        public Boolean procesar_evento_llamada_a_url(URL url, oks ok, Object ... extras_array) throws Exception;
         /**
          * Escribe una copia del texto del Webview
          * @param texto
@@ -300,7 +300,7 @@ public class Webview_simpleController implements Initializable {
                 try {
                     if (newValue.isEmpty() == false) {
                         url = new URL(newValue.trim());
-                        procesar_url(url, ok);
+                        procesar_evento_llamada_a_url(url, ok);
                     }
                 } catch (Exception e) {
                     try {
@@ -323,12 +323,12 @@ public class Webview_simpleController implements Initializable {
      * @return true si todo es correcto, false si hay error.
      * @throws java.lang.Exception
      */
-    public boolean procesar_url(URL url, oks ok, Object ... extras_array) throws Exception {
+    public boolean procesar_evento_llamada_a_url(URL url, oks ok, Object ... extras_array) throws Exception {
         if (ok.es == false) { return ok.es; }
         Boolean ret_Boolean = true;
         if (i_Webview_simpleController_extension != null) {
             ok.iniciar();
-            ret_Boolean = i_Webview_simpleController_extension.procesar_url(url, ok);
+            ret_Boolean = i_Webview_simpleController_extension.procesar_evento_llamada_a_url(url, ok);
             if (ret_Boolean == null) {
                 ok.es = true;
             } else {

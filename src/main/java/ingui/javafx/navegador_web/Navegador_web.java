@@ -40,12 +40,13 @@ public class Navegador_web extends Application {
     public static String k_fxml_webview_simple = "/re/ingui/javafx/webtec/webview_simple.fxml";
     public static String k_parametro_url = "-url";
     public ResourceBundle in = null;
-    public Contenedor_principalController contenedor_principalController;
     public Webview_simpleController_implementaciones webview_simpleController_implementacion;
-    public I_Webview_simpleController_capturas i_webview_simpleController_captura;
-    public Webview_simpleController webview_simpleController;
-    public iniciales navegador_web_inicial = new iniciales () {
+    public I_Webview_simpleController_capturas _i_webview_simpleController_captura;
+    public Webview_simpleController _webview_simpleController;
+    public Contenedor_principalController _contenedor_principalController;
+    public iniciales _inicial = new iniciales () {
         @Override
+        @SuppressWarnings("unchecked")
         public boolean run(oks ok, Object... extra_array) throws Exception {
             try {
                 if (ok.es == false) { return ok.es; }
@@ -56,7 +57,7 @@ public class Navegador_web extends Application {
                 }
                 iniciar(ok);
                 if (ok.es) {
-                    launch(Navegador_web.class, (String []) extra_array[0]);
+                    launch((Class<? extends Application>) extra_array[0], (String []) extra_array[1]);
                     terminar(ok);
                 }
                 return ok.es;
@@ -113,7 +114,7 @@ public class Navegador_web extends Application {
     public boolean iniciar_atributos(oks ok, Object ... extras_array) throws Exception {
         if (ok.es == false) { return ok.es; }
         in = ResourceBundles.getBundle(k_in_ruta);
-        i_webview_simpleController_captura = new I_Webview_simpleController_capturas() {
+        _i_webview_simpleController_captura = new I_Webview_simpleController_capturas() {
             @Override
             public boolean poner_error(String mensaje, oks ok, Object ... extras_array) {
                 return Navegador_web.this.poner_error(mensaje, ok);
@@ -122,7 +123,7 @@ public class Navegador_web extends Application {
             public boolean procesar_estado(String estado, String url_texto, oks ok, Object ... extras_array) throws Exception {
                 if (ok.es == false) { return ok.es; }
                 String mensaje = "";
-                if (webview_simpleController.presentar_contenido_seguro_intentos_num == 2) {
+                if (_webview_simpleController.presentar_contenido_seguro_intentos_num == 2) {
                     mensaje = tr.in(in, "¡ORIGEN NO CERTIFICADO! ");
                 }
                 if (estado.equals("SUCCEEDED")) {
@@ -158,7 +159,7 @@ public class Navegador_web extends Application {
                         return ((Webview_simpleController_implementaciones) o).presentar_contenido(ok, extras_array);
                     }
                 }
-                return webview_simpleController.presentar_contenido(ok);
+                return _webview_simpleController.presentar_contenido(ok);
             }
             @Override
             public boolean presentar_contenido(URI uri, oks ok, Object ... extras_array) throws Exception {
@@ -168,7 +169,7 @@ public class Navegador_web extends Application {
                         return ((Webview_simpleController_implementaciones) o).presentar_contenido(uri, ok, extras_array);
                     }
                 }
-                return webview_simpleController.presentar_contenido(uri, ok);
+                return _webview_simpleController.presentar_contenido(uri, ok);
             }
         };
         return ok.es;
@@ -183,24 +184,21 @@ public class Navegador_web extends Application {
                 FXMLLoader fxmlloader = new FXMLLoader(getClass().getResource(k_fxml_contenedor_principal), resourceBundle); //NOI18N
                 Parent root = fxmlloader.load();
                 // Acceder al controller:
-                contenedor_principalController = fxmlloader.<Contenedor_principalController>getController();
-                contenedor_principalController.poner_panel(1, k_fxml_webview_simple, resourceBundle, ok); //NOI18N
+                _contenedor_principalController = fxmlloader.<Contenedor_principalController>getController();
+                _contenedor_principalController.poner_panel(1, k_fxml_webview_simple, resourceBundle, ok); //NOI18N
                 if (ok.es == false) { break; }
                 poner_icono(stage, ok);
                 if (ok.es == false) { break; }
                 stage.setTitle(tr.in(in, "TITULO"));
                 stage.setScene(new Scene(root));
                 stage.show();
-                FXMLLoader fxmlloader_1 = contenedor_principalController.fxmlLoader_1; 
-                webview_simpleController = fxmlloader_1.<Webview_simpleController>getController();
-                webview_simpleController.agregar_objeto_de_captura(i_webview_simpleController_captura, ok);
+                FXMLLoader fxmlloader_1 = _contenedor_principalController.fxmlLoader_1; 
+                _webview_simpleController = fxmlloader_1.<Webview_simpleController>getController();
+                _webview_simpleController.agregar_objeto_de_captura(_i_webview_simpleController_captura, ok);
                 if (ok.es == false) { break; }
-                webview_simpleController.agregar_objeto_de_extension(webview_simpleController_implementacion, ok);
+                _webview_simpleController.agregar_objeto_de_extension(webview_simpleController_implementacion, ok);
                 if (ok.es == false) { break; }
-                contenedor_principalController.webview_simpleController = webview_simpleController;
-                // Ejemplo de uso de forularios: 
-                // webview_simpleController_implementacion._cargar_formulario(ok);
-                // Captura de URL desde línea de comando (-url)
+                _contenedor_principalController.webview_simpleController = _webview_simpleController;
                 Application.Parameters parametros_aplicacion = getParameters();
                 List<String> parametros_lista = parametros_aplicacion.getRaw();
                 navegar(parametros_lista, ok);
@@ -216,7 +214,7 @@ public class Navegador_web extends Application {
     }
     /**
      * Realiza la operativa de navegar para presentar una página web
-     * @param parametros_lista
+     * @param parametros_lista Recibidos en la aplicación por la línea de comandos, y convertidos en una lista.
      * @param ok
      * @param extra_array
      * @return
@@ -259,8 +257,7 @@ public class Navegador_web extends Application {
         Navegador_web navegador_web = null;
         try {
             navegador_web = new Navegador_web();
-            Object [] objects_array = { args };
-            navegador_web.navegador_web_inicial.run(ok, objects_array);
+            navegador_web._inicial.run(ok, Navegador_web.class, args);
         } catch (Exception e) {
             ok.setTxt(e);
         }
@@ -274,8 +271,8 @@ public class Navegador_web extends Application {
     
     public boolean poner_error(String mensaje, oks ok, Object ... extras_array)  {
         boolean ret = true;
-        if (contenedor_principalController != null) {
-            ret = contenedor_principalController.poner_error(mensaje, ok);
+        if (_contenedor_principalController != null) {
+            ret = _contenedor_principalController.poner_error(mensaje, ok);
         }
         err.printf(ok.txt);
         return ret;
