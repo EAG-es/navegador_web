@@ -35,7 +35,7 @@ import javafx.scene.image.Image;
  */
 public class Navegador_web extends Application {
     public static String k_in_ruta = "in/ingui/javafx/navegador_web/in";  //NOI18N
-    public static String k_icono_ruta = "/re/ingui.javafx.navegador_web.icono.jpg";
+    public static String k_icono_ruta = "/re/ingui.javafx.navegador_web.icono.png";
     public static String k_fxml_contenedor_principal = "/re/ingui/javafx/navegador_web/contenedor_principal.fxml";
     public static String k_fxml_webview_simple = "/re/ingui/javafx/webtec/webview_simple.fxml";
     public static String k_parametro_url = "-url";
@@ -241,6 +241,7 @@ public class Navegador_web extends Application {
      * @param ok
      * @param extra_array
      * @return true si tiene éxito, false si hay error.
+     * @throws java.lang.Exception
      */
     public boolean poner_icono(Stage stage, oks ok, Object... extra_array) throws Exception {
         if (ok.es == false) { return ok.es; }
