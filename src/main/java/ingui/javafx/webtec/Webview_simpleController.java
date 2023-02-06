@@ -522,13 +522,12 @@ public class Webview_simpleController implements Initializable {
      * @throws java.lang.Exception
      */
     public boolean escribir_texto(String texto, oks ok, Object ... extras_array) throws Exception {
-        boolean ret = true;
         if (i_Webview_simpleController_extension != null) {
-            ret = i_Webview_simpleController_extension.escribir_texto(texto, ok);
+            i_Webview_simpleController_extension.escribir_texto(texto, ok);
         } else {
             webview_texto = texto;
         }
-        return ret;
+        return ok.es;
     }
     /**
      * Lee una copia del texto del Webview
@@ -546,5 +545,31 @@ public class Webview_simpleController implements Initializable {
         }
         return retorno;
     }
+    /**
+     * Equivalente a pulsar el botón atrás en el navegador
+     * @param ok
+     * @param extras_array
+     * @return 
+     * @throws Exception 
+     */
+    public boolean ir_adelante_en_historial_urls(oks ok, Object ... extras_array) throws Exception {
+        Platform.runLater(() -> {
+            webEngine.executeScript("history.back()");
+        });
+        return ok.es;
+    }
+    /**
+     * Equivalente a pulsar el botón atrás en el navegador
+     * @param ok
+     * @param extras_array
+     * @return 
+     * @throws Exception 
+     */
+    public boolean ir_atras_en_historial_urls(oks ok, Object ... extras_array) throws Exception {
+        Platform.runLater(() -> {
+            webEngine.executeScript("history.forward()");
+        });
+        return ok.es;
+    }    
 }
     

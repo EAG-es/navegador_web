@@ -5,6 +5,8 @@
  */
 package ingui.javafx.navegador_web;
 
+import ingui.javafx.webtec.Webview_simpleController;
+import innui.bases;
 import innui.modelos.configuraciones.ResourceBundles;
 import innui.modelos.errores.oks;
 import innui.modelos.internacionalizacion.tr;
@@ -24,10 +26,16 @@ import javafx.scene.control.TextField;
  *
  * @author emilio
  */
-public class Contenedor_principalController implements Initializable {
+public class Contenedor_principalController 
+        extends bases
+        implements Initializable {
     public static String k_in_ruta = "in/ingui/javafx/navegador_web/in";  //NOI18N
 
     public ResourceBundle in = null;
+    @FXML
+    private Button atras_boton;
+    @FXML
+    private Button adelante_boton;
     
     public Contenedor_principalController() throws Exception {
         in = ResourceBundles.getBundle(k_in_ruta);
@@ -39,9 +47,7 @@ public class Contenedor_principalController implements Initializable {
     public FXMLLoader fxmlLoader_1;
     @FXML
     private TextField errores_textfield;
-    @FXML
-    private Button inicio_boton;
-    public Webview_simpleController_implementaciones webview_simpleController_implementacion;
+    public Webview_simpleController webview_simpleController;
     /**
      * Initializes the controller class.
      */
@@ -66,11 +72,16 @@ public class Contenedor_principalController implements Initializable {
         return ok.es;
     }
 
+    public boolean poner_error(String mensaje, oks ok, Object ... extras_array) {
+        errores_textfield.setText(mensaje);
+        return ok.es;
+    }
+
     @FXML
-    private void procesar_accion_en_inicio_boton(ActionEvent event) {
+    private void procesar_accion_en_atras_boton(ActionEvent event) {
         oks ok = new oks();
         try {
-            webview_simpleController_implementacion._cargar_formulario(ok);
+            webview_simpleController.ir_atras_en_historial_urls(ok);
             if (ok.es) {
                 poner_error(ok.txt, ok);
             }
@@ -79,9 +90,18 @@ public class Contenedor_principalController implements Initializable {
             poner_error(ok.txt, ok);
         }
     }
-    
-    public boolean poner_error(String mensaje, oks ok, Object ... extras_array) {
-        errores_textfield.setText(mensaje);
-        return ok.es;
+
+    @FXML
+    private void procesar_accion_en_adelante_boton(ActionEvent event) {
+        oks ok = new oks();
+        try {
+            webview_simpleController.ir_adelante_en_historial_urls(ok);
+            if (ok.es) {
+                poner_error(ok.txt, ok);
+            }
+        } catch (Exception e) {
+            ok.setTxt(e);
+            poner_error(ok.txt, ok);
+        }
     }
 }

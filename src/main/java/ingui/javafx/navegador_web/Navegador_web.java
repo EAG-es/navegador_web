@@ -20,10 +20,9 @@ import innui.modelos.errores.oks;
 import innui.modelos.internacionalizacion.tr;
 import innui.modelos.modelos;
 import innui.modelos.modelos_comunicaciones.modelos_comunicaciones;
-import java.io.File;
 import java.io.InputStream;
+import static java.lang.System.err;
 import static java.lang.System.exit;
-import java.util.Arrays;
 import java.util.List;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
@@ -37,8 +36,8 @@ import javafx.scene.image.Image;
 public class Navegador_web extends Application {
     public static String k_in_ruta = "in/ingui/javafx/navegador_web/in";  //NOI18N
     public static String k_icono_ruta = "/re/ingui.javafx.navegador_web.icono.jpg";
-    public static String k_fxml_contenedor_principal = "/ingui/javafx/navegador_web/contenedor_principal.fxml";
-    public static String k_fxml_webview_simple = "/ingui/javafx/webtec/webview_simple.fxml";
+    public static String k_fxml_contenedor_principal = "/re/ingui/javafx/navegador_web/contenedor_principal.fxml";
+    public static String k_fxml_webview_simple = "/re/ingui/javafx/webtec/webview_simple.fxml";
     public static String k_parametro_url = "-url";
     public ResourceBundle in = null;
     public Contenedor_principalController contenedor_principalController;
@@ -50,9 +49,14 @@ public class Navegador_web extends Application {
         public boolean run(oks ok, Object... extra_array) throws Exception {
             try {
                 if (ok.es == false) { return ok.es; }
+                if (o != null) {
+                    if (o instanceof iniciales) {
+                        return ((iniciales) o).run(ok, extra_array);
+                    }
+                }
                 iniciar(ok);
                 if (ok.es) {
-                    launch((String []) extra_array[0]);
+                    launch(Navegador_web.class, (String []) extra_array[0]);
                     terminar(ok);
                 }
                 return ok.es;
@@ -63,6 +67,11 @@ public class Navegador_web extends Application {
 
         @Override
         public boolean iniciar(oks ok, Object... extra_array) throws Exception {
+            if (o != null) {
+                if (o instanceof iniciales) {
+                    return ((iniciales) o).iniciar(ok, extra_array);
+                }
+            }
             if (ok.es == false) { return ok.es; }
             _iniciar_desde_clase(modelos.class, ok);
             if (ok.es == false) { return ok.es; }
@@ -75,6 +84,11 @@ public class Navegador_web extends Application {
 
         @Override
         public boolean terminar(oks ok, Object... extra_array) throws Exception {
+            if (o != null) {
+                if (o instanceof iniciales) {
+                    return ((iniciales) o).terminar(ok, extra_array);
+                }
+            }
             if (ok.es == false) { return ok.es; }
             _terminar_desde_clase(modelos.class, ok);
             if (ok.es == false) { return ok.es; }
@@ -138,10 +152,22 @@ public class Navegador_web extends Application {
         webview_simpleController_implementacion = new Webview_simpleController_implementaciones() {
             @Override
             public boolean presentar_contenido(oks ok, Object ... extras_array) throws Exception {
+                if (ok.es == false) { return ok.es; }
+                if (o != null) {
+                    if (o instanceof Webview_simpleController_implementaciones) {
+                        return ((Webview_simpleController_implementaciones) o).presentar_contenido(ok, extras_array);
+                    }
+                }
                 return webview_simpleController.presentar_contenido(ok);
             }
             @Override
             public boolean presentar_contenido(URI uri, oks ok, Object ... extras_array) throws Exception {
+                if (ok.es == false) { return ok.es; }
+                if (o != null) {
+                    if (o instanceof Webview_simpleController_implementaciones) {
+                        return ((Webview_simpleController_implementaciones) o).presentar_contenido(uri, ok, extras_array);
+                    }
+                }
                 return webview_simpleController.presentar_contenido(uri, ok);
             }
         };
@@ -151,7 +177,6 @@ public class Navegador_web extends Application {
     public void start(Stage stage) throws Exception {
         oks ok = new oks();
         try {
-            int index;
             while (true) {
                 Locale locale = Locale.getDefault();
                 ResourceBundle resourceBundle = ResourceBundles.getBundle(k_in_ruta, locale);
@@ -159,7 +184,6 @@ public class Navegador_web extends Application {
                 Parent root = fxmlloader.load();
                 // Acceder al controller:
                 contenedor_principalController = fxmlloader.<Contenedor_principalController>getController();
-                contenedor_principalController.webview_simpleController_implementacion = webview_simpleController_implementacion;
                 contenedor_principalController.poner_panel(1, k_fxml_webview_simple, resourceBundle, ok); //NOI18N
                 if (ok.es == false) { break; }
                 poner_icono(stage, ok);
@@ -173,6 +197,7 @@ public class Navegador_web extends Application {
                 if (ok.es == false) { break; }
                 webview_simpleController.agregar_objeto_de_extension(webview_simpleController_implementacion, ok);
                 if (ok.es == false) { break; }
+                contenedor_principalController.webview_simpleController = webview_simpleController;
                 // Ejemplo de uso de forularios: 
                 // webview_simpleController_implementacion._cargar_formulario(ok);
                 // Captura de URL desde línea de comando (-url)
@@ -252,6 +277,7 @@ public class Navegador_web extends Application {
         if (contenedor_principalController != null) {
             ret = contenedor_principalController.poner_error(mensaje, ok);
         }
+        err.printf(ok.txt);
         return ret;
     }
 }
