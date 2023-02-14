@@ -103,11 +103,6 @@
             <artifactId>modelos</artifactId>
             <version>1.0</version>
         </dependency>
-        <dependency>
-            <groupId>innui.modelos</groupId>
-            <artifactId>modelos_comunicaciones</artifactId>
-            <version>1.0</version>
-        </dependency>
                 
         <dependency>
             <groupId>org.openjfx</groupId>
@@ -253,6 +248,11 @@
             <groupId>inclui.configurar_javafx</groupId>
             <artifactId>configurar_javafx</artifactId>
             <version>17.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>innui.modelos</groupId>
+            <artifactId>modelos_comunicaciones</artifactId>
+            <version>1.0</version>
         </dependency>
     </dependencies>
 </project>
