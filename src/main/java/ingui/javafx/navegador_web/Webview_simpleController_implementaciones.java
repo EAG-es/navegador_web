@@ -31,7 +31,7 @@ public abstract class Webview_simpleController_implementaciones
     /**
      * Procesa las peticiones URL que recibe el Webview_simpleController
      * @param url
-     * @return true si todo es correcto, false si hay error.
+     * @return true si todo es correcto, false/null si hay error.
      */
     @Override
     public Boolean procesar_evento_llamada_a_url(URL url, oks ok, Object ... extras_array) throws Exception {

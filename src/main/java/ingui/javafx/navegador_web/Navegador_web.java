@@ -23,6 +23,7 @@ import innui.modelos.modelos_comunicaciones.modelos_comunicaciones;
 import java.io.InputStream;
 import static java.lang.System.err;
 import static java.lang.System.exit;
+import java.net.URL;
 import java.util.List;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
@@ -153,24 +154,42 @@ public class Navegador_web extends Application {
         webview_simpleController_implementacion = new Webview_simpleController_implementaciones() {
             @Override
             public boolean presentar_contenido(oks ok, Object ... extras_array) throws Exception {
-                if (ok.es == false) { return ok.es; }
-                if (o != null) {
-                    if (o instanceof Webview_simpleController_implementaciones) {
-                        return ((Webview_simpleController_implementaciones) o).presentar_contenido(ok, extras_array);
+                try {
+                    if (ok.es == false) { return ok.es; }
+                    if (o != null) {
+                        if (o instanceof Webview_simpleController_implementaciones) {
+                            return ((Webview_simpleController_implementaciones) o).presentar_contenido(ok, extras_array);
+                        }
                     }
+                    return _webview_simpleController.presentar_contenido(ok);
+                } catch (Exception e) {
+                    throw e;
                 }
-                return _webview_simpleController.presentar_contenido(ok);
             }
             @Override
             public boolean presentar_contenido(URI uri, oks ok, Object ... extras_array) throws Exception {
-                if (ok.es == false) { return ok.es; }
-                if (o != null) {
-                    if (o instanceof Webview_simpleController_implementaciones) {
-                        return ((Webview_simpleController_implementaciones) o).presentar_contenido(uri, ok, extras_array);
+                try {
+                    if (ok.es == false) { return ok.es; }
+                    if (o != null) {
+                        if (o instanceof Webview_simpleController_implementaciones) {
+                            return ((Webview_simpleController_implementaciones) o).presentar_contenido(uri, ok, extras_array);
+                        }
                     }
+                    return _webview_simpleController.presentar_contenido(uri, ok);
+                } catch (Exception e) {
+                    throw e;
                 }
-                return _webview_simpleController.presentar_contenido(uri, ok);
             }
+            @Override
+            public Boolean procesar_evento_llamada_a_url(URL url, oks ok, Object ... extras_array) throws Exception {
+                try {
+                    if (ok.es == false) { return ok.es; }
+                    Navegador_web.this.procesar_evento_llamada_a_url(url, ok, extras_array);
+                    return ok.es;
+                } catch (Exception e) {
+                    throw e;
+                }
+            }    
         };
         return ok.es;
     }   
@@ -235,6 +254,22 @@ public class Navegador_web extends Application {
         }
         return ok.es;
     }
+    /**
+     * Captura las URLs que son llamadas (clic) en el navegador 
+     * @param url
+     * @param ok
+     * @param extras_array
+     * @return true si todo es correcto, false/null si hay error.
+     * @throws Exception 
+     */
+    public Boolean procesar_evento_llamada_a_url(URL url, oks ok, Object ... extras_array) throws Exception {
+        try {
+            if (ok.es == false) { return ok.es; }
+            return ok.es;
+        } catch (Exception e) {
+            throw e;
+        }
+    }    
     /**
      * Pone el icono de la aplicación
      * @param stage Escenario donde poner el icono
