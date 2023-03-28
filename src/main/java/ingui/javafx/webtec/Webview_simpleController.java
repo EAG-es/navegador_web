@@ -5,7 +5,7 @@
  */
 package ingui.javafx.webtec;
 
-import innui.modelos.comunicaciones.sockets.sslsocket_factory_sin_validaciones;
+import innui.modelos.comunicaciones.sockets.sslcontext_sin_verificar_hostnames;
 import innui.modelos.configuraciones.ResourceBundles;
 import innui.modelos.errores.oks;
 import innui.modelos.internacionalizacion.tr;
@@ -91,7 +91,7 @@ public class Webview_simpleController implements Initializable {
     public boolean es_intentar_sin_certificado_valido = false;
     public int presentar_contenido_seguro_intentos_num = 0;
     public boolean es_cancelar_peticion_en_curso = false;
-    public sslsocket_factory_sin_validaciones sslsoket_factory_sin_validacion = new sslsocket_factory_sin_validaciones();
+    public sslcontext_sin_verificar_hostnames sslcontext_sin_verificar_hostname = new sslcontext_sin_verificar_hostnames();
     public URI uri = null;
     /**
      * Método que pone el escuchador de cambios de URL
@@ -104,7 +104,7 @@ public class Webview_simpleController implements Initializable {
         oks ok = new oks();
         try {
             webEngine = webview.getEngine();
-            sslsoket_factory_sin_validacion.inicial_SSLSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
+            sslcontext_sin_verificar_hostname.inicial_SSLSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
             while (true) {
                 poner_escuchador_cambios_url(ok);
                 if (ok.es == false) { break; }
@@ -221,13 +221,13 @@ public class Webview_simpleController implements Initializable {
                         if (es_uri_parecida) {
                             if (newState == Worker.State.FAILED) {
                                 if (presentar_contenido_seguro_intentos_num == 0) {
-                                    if (sslsoket_factory_sin_validacion.temporal_SSLSocketFactory != null) {
+                                    if (sslcontext_sin_verificar_hostname.actual_SSLSocketFactory != null) {
                                         presentar_contenido_seguro_intentos_num = 1;
                                         es_cancelar_peticion_en_curso = true;
-                                        presentar_contenido_con_factoria_de_socket(uri, sslsoket_factory_sin_validacion.temporal_SSLSocketFactory, ok);
+                                        presentar_contenido_con_factoria_de_socket(uri, sslcontext_sin_verificar_hostname.actual_SSLSocketFactory, ok);
                                     }
                                 } else if (presentar_contenido_seguro_intentos_num == 1) {
-                                    sslsoket_factory_sin_validacion.restaurar_SSLSocketFactory(ok);
+                                    sslcontext_sin_verificar_hostname.restaurar_SSLSocketFactory(ok);
                                     if (es_intentar_sin_certificado_valido) {
                                         presentar_contenido_seguro_intentos_num = 2;
                                         es_cancelar_peticion_en_curso = true;
@@ -239,7 +239,7 @@ public class Webview_simpleController implements Initializable {
                                 } else if (presentar_contenido_seguro_intentos_num == 2) {
                                     presentar_contenido_seguro_intentos_num = 0;
                                     es_intentar_sin_certificado_valido = false;
-                                    sslsoket_factory_sin_validacion.restaurar_HostnameVerifier(ok);
+                                    sslcontext_sin_verificar_hostname.restaurar_HostnameVerifier(ok);
                                 }
                             } else if (newState == Worker.State.CANCELLED) {
                                 if (es_cancelar_peticion_en_curso) {
@@ -248,24 +248,24 @@ public class Webview_simpleController implements Initializable {
                                     if (presentar_contenido_seguro_intentos_num == 1) {
                                         presentar_contenido_seguro_intentos_num = 0;
                                         es_cancelar_peticion_en_curso = false;
-                                        sslsoket_factory_sin_validacion.restaurar_SSLSocketFactory(ok);
+                                        sslcontext_sin_verificar_hostname.restaurar_SSLSocketFactory(ok);
                                     } else if (presentar_contenido_seguro_intentos_num == 2) {
                                         es_intentar_sin_certificado_valido = false;
                                         presentar_contenido_seguro_intentos_num = 0;
                                         es_cancelar_peticion_en_curso = false;
-                                        sslsoket_factory_sin_validacion.restaurar_HostnameVerifier(ok);
+                                        sslcontext_sin_verificar_hostname.restaurar_HostnameVerifier(ok);
                                     }
                                 }
                             } else if (newState == Worker.State.SUCCEEDED) { 
                                 if (presentar_contenido_seguro_intentos_num == 1) {
                                     presentar_contenido_seguro_intentos_num = 0;
                                     es_cancelar_peticion_en_curso = false;
-                                    sslsoket_factory_sin_validacion.restaurar_SSLSocketFactory(ok);
+                                    sslcontext_sin_verificar_hostname.restaurar_SSLSocketFactory(ok);
                                 } else if (presentar_contenido_seguro_intentos_num == 2) {
                                     es_intentar_sin_certificado_valido = false;
                                     presentar_contenido_seguro_intentos_num = 0;
                                     es_cancelar_peticion_en_curso = false;
-                                    sslsoket_factory_sin_validacion.restaurar_HostnameVerifier(ok);
+                                    sslcontext_sin_verificar_hostname.restaurar_HostnameVerifier(ok);
                                 }
                             }
                         }
@@ -413,7 +413,7 @@ public class Webview_simpleController implements Initializable {
             , oks ok, Object ... extras_array) throws Exception {
         if (ok.es == false) { return ok.es; }
         this.es_intentar_sin_certificado_valido = es_intentar_sin_certificado_valido;
-        sslsoket_factory_sin_validacion.temporal_SSLSocketFactory = sSLSocketFactory;
+        sslcontext_sin_verificar_hostname.actual_SSLSocketFactory = sSLSocketFactory;
         presentar_contenido(uri, ok);
         return ok.es;
     }
@@ -455,7 +455,7 @@ public class Webview_simpleController implements Initializable {
             SSLContext sSLContext = SSLContext.getInstance("TLS"); 
             sSLContext.init(null, trustAllCerts, new java.security.SecureRandom()); 
             HttpsURLConnection.setDefaultSSLSocketFactory(sSLContext.getSocketFactory());            
-            sslsoket_factory_sin_validacion.hostnameVerifier 
+            sslcontext_sin_verificar_hostname.inicial_hostnameVerifier 
                     = HttpsURLConnection.getDefaultHostnameVerifier();
             HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
             webEngine.load(texto);
