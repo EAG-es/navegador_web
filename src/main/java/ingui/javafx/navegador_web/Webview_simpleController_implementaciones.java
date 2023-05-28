@@ -35,14 +35,12 @@ public abstract class Webview_simpleController_implementaciones
      */
     @Override
     public Boolean procesar_evento_llamada_a_url(URL url, oks ok, Object ... extras_array) throws Exception {
-        if (ok.es == false) { return ok.es; }
-        if (o != null) {
-            if (o instanceof Webview_simpleController_implementaciones) {
-                return ((Webview_simpleController_implementaciones) o).procesar_evento_llamada_a_url(url, ok, extras_array);
-            }
-        }
-        // No hace nada, en esta aplicación. Un ejemplo sería si llamase a: _ejemplo_procesamiento_de_clic_en_url_del_navegador_web
-        // _ejemplo_procesamiento_de_clic_en_url_del_navegador_web(url, ok);
+//        if (ok.es == false) { return ok.es; }
+//        if (o != null) {
+//            if (o instanceof Webview_simpleController_implementaciones) {
+//                return ((Webview_simpleController_implementaciones) o).procesar_evento_llamada_a_url(url, ok, extras_array);
+//            }
+//        }
         return ok.es;
     }    
     /**

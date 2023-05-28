@@ -265,6 +265,7 @@ public class Navegador_web extends Application {
     public Boolean procesar_evento_llamada_a_url(URL url, oks ok, Object ... extras_array) throws Exception {
         try {
             if (ok.es == false) { return ok.es; }
+            poner_error("", ok);
             return ok.es;
         } catch (Exception e) {
             throw e;
