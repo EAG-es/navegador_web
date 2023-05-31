@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ingui.javafx.navegador_web;
 
 import java.net.URI;
@@ -40,6 +35,7 @@ public class Navegador_web extends Application {
     public static String k_fxml_contenedor_principal = "/re/ingui/javafx/navegador_web/contenedor_principal.fxml";
     public static String k_fxml_webview_simple = "/re/ingui/javafx/webtec/webview_simple.fxml";
     public static String k_parametro_url = "-url";
+    public String titulo_de_ventana = null;
     public ResourceBundle in = null;
     public Webview_simpleController_implementaciones webview_simpleController_implementacion;
     public I_Webview_simpleController_capturas _i_webview_simpleController_captura;
@@ -115,6 +111,7 @@ public class Navegador_web extends Application {
     public boolean iniciar_atributos(oks ok, Object ... extras_array) throws Exception {
         if (ok.es == false) { return ok.es; }
         in = ResourceBundles.getBundle(k_in_ruta);
+        titulo_de_ventana = tr.in(in, "TITULO");
         _i_webview_simpleController_captura = new I_Webview_simpleController_capturas() {
             @Override
             public boolean poner_error(String mensaje, oks ok, Object ... extras_array) {
@@ -208,7 +205,7 @@ public class Navegador_web extends Application {
                 if (ok.es == false) { break; }
                 poner_icono(stage, ok);
                 if (ok.es == false) { break; }
-                stage.setTitle(tr.in(in, "TITULO"));
+                stage.setTitle(titulo_de_ventana);
                 stage.setScene(new Scene(root));
                 stage.show();
                 FXMLLoader fxmlloader_1 = _contenedor_principalController.fxmlLoader_1; 
