@@ -33,20 +33,20 @@ public class Contenedor_principalController
 
     public ResourceBundle in = null;
     @FXML
-    private Button atras_boton;
+    public Button atras_boton;
     @FXML
-    private Button adelante_boton;
+    public Button adelante_boton;
     
     public Contenedor_principalController() throws Exception {
         in = ResourceBundles.getBundle(k_in_ruta);
     }
 
     @FXML
-    private ScrollPane scrollpane_1;
+    public ScrollPane scrollpane_1;
 
     public FXMLLoader fxmlLoader_1;
     @FXML
-    private TextField errores_textfield;
+    public TextField errores_textfield;
     public Webview_simpleController webview_simpleController;
     /**
      * Initializes the controller class.
