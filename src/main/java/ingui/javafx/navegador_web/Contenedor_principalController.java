@@ -12,6 +12,7 @@ import innui.modelos.errores.oks;
 import innui.modelos.internacionalizacion.tr;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -20,6 +21,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Region;
+import javafx.scene.text.Text;
 
 /**
  * FXML Controller class
@@ -50,10 +53,25 @@ public class Contenedor_principalController
     public Webview_simpleController webview_simpleController;
     /**
      * Initializes the controller class.
+     * @param url
+     * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        errores_textfield.setMinWidth(Region.USE_PREF_SIZE);
+        errores_textfield.setMaxWidth(Region.USE_PREF_SIZE);
+        errores_textfield.textProperty().addListener((ov, prevText, currText) -> {
+            // Do this in a Platform.runLater because of Textfield has no padding at first time and so on
+            Platform.runLater(() -> {
+                Text text = new Text(currText);
+                text.setFont(errores_textfield.getFont()); // Set the same font, so the size is the same
+                double width = text.getLayoutBounds().getWidth() // This big is the Text in the TextField
+                        + errores_textfield.getPadding().getLeft() + errores_textfield.getPadding().getRight() // Add the padding of the TextField
+                        + 2d; // Add some spacing
+                errores_textfield.setPrefWidth(width); // Set the width
+                errores_textfield.positionCaret(errores_textfield.getCaretPosition()); // If you remove this line, it flashes a little bit
+            });
+        });
     }    
     
     public boolean poner_panel(int numero, String archivo_fxml, ResourceBundle resourceBundle, oks ok, Object ... extras_array) throws Exception {
