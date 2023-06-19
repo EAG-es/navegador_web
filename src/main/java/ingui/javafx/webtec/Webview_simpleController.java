@@ -93,6 +93,7 @@ public class Webview_simpleController implements Initializable {
     public boolean es_cancelar_peticion_en_curso = false;
     public sslcontext_sin_verificar_hostnames sslcontext_sin_verificar_hostname = new sslcontext_sin_verificar_hostnames();
     public URI uri = null;
+    public URI inicio_uri = null;
     /**
      * Método que pone el escuchador de cambios de URL
      * Llama a poner_error, si hay error.
@@ -394,9 +395,14 @@ public class Webview_simpleController implements Initializable {
      */
     public boolean presentar_contenido(URI uri, oks ok, Object ... extras_array) throws Exception {
         if (ok.es == false) { return ok.es; }
-        String texto = uri.toString();
+        final String texto = uri.toString();
         this.uri = uri;
-        webEngine.load(texto);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                webEngine.load(texto);
+            }
+        });
         return ok.es;
     }
    /**
@@ -554,7 +560,7 @@ public class Webview_simpleController implements Initializable {
      */
     public boolean ir_adelante_en_historial_urls(oks ok, Object ... extras_array) throws Exception {
         Platform.runLater(() -> {
-            webEngine.executeScript("history.back()");
+            webEngine.executeScript("history.forward()");
         });
         return ok.es;
     }
@@ -567,9 +573,23 @@ public class Webview_simpleController implements Initializable {
      */
     public boolean ir_atras_en_historial_urls(oks ok, Object ... extras_array) throws Exception {
         Platform.runLater(() -> {
-            webEngine.executeScript("history.forward()");
+            webEngine.executeScript("history.back()");
         });
         return ok.es;
     }    
+    /**
+     * Equivalente a pulsar el botón atrás en el navegador
+     * @param ok
+     * @param extras_array
+     * @return 
+     * @throws Exception 
+     */
+    public boolean ir_a_inicio_en_historial_urls(oks ok, Object ... extras_array) throws Exception {
+        if (ok.es == false) { return false; }
+        if (inicio_uri != null) {
+            return presentar_contenido(inicio_uri, ok, extras_array);
+        }
+        return ok.es;
+    }
 }
     

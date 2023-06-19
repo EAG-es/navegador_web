@@ -10,6 +10,7 @@ import innui.bases;
 import innui.modelos.configuraciones.ResourceBundles;
 import innui.modelos.errores.oks;
 import innui.modelos.internacionalizacion.tr;
+import java.net.URI;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -39,6 +40,8 @@ public class Contenedor_principalController
     public Button atras_boton;
     @FXML
     public Button adelante_boton;
+    @FXML
+    public Button inicio_boton;
     
     public Contenedor_principalController() throws Exception {
         in = ResourceBundles.getBundle(k_in_ruta);
@@ -95,6 +98,11 @@ public class Contenedor_principalController
         return ok.es;
     }
 
+    public boolean poner_inicio_uri(URI uri, oks ok, Object ... extras_array) {
+        webview_simpleController.inicio_uri = uri;
+        return ok.es;
+    }
+
     @FXML
     private void procesar_accion_en_atras_boton(ActionEvent event) {
         oks ok = new oks();
@@ -114,6 +122,20 @@ public class Contenedor_principalController
         oks ok = new oks();
         try {
             webview_simpleController.ir_adelante_en_historial_urls(ok);
+            if (ok.es) {
+                poner_error(ok.txt, ok);
+            }
+        } catch (Exception e) {
+            ok.setTxt(e);
+            poner_error(ok.txt, ok);
+        }
+    }
+
+    @FXML
+    private void procesar_accion_en_inicio_boton(ActionEvent event) {
+        oks ok = new oks();
+        try {
+            webview_simpleController.ir_a_inicio_en_historial_urls(ok);
             if (ok.es) {
                 poner_error(ok.txt, ok);
             }
