@@ -308,7 +308,7 @@ public class Navegador_web extends Application {
         if (_contenedor_principalController != null) {
             ret = _contenedor_principalController.poner_error(mensaje, ok);
         }
-        err.printf(ok.txt);
+        err.printf(mensaje);
         return ret;
     }
 }
